@@ -9,10 +9,10 @@ const shapeSelector = document.getElementById('shape-selector');
 shapeSelector.addEventListener('change', () => {
     if (shapeSelector.value === '') {
         canvas.isDrawingMode = true;
-        updateDrawingButton();  // Optional, only if you want button synced
+        updateDrawingButton();  
     } else {
         canvas.isDrawingMode = false;
-        updateDrawingButton();  // Optional
+        updateDrawingButton();  
     }
 });
 
@@ -43,10 +43,10 @@ let origX, origY;
 let undoStack = [];
 let redoStack = [];
 
-let isRestoring = false; // Add this flag
+let isRestoring = false; 
 
 function saveState() {
-    if (isRestoring) return; // Prevent saving during undo/redo
+    if (isRestoring) return; 
     redoStack = [];
     undoStack.push(canvas.toJSON());
     if (undoStack.length > 50) undoStack.shift();
@@ -75,11 +75,7 @@ function redoCanvas() {
         });
     }
 }
-// ...existing code...
 
-// canvas.style.background = 'rgb(255,255,255)';
-
-//Get username and room from URL
 const { username, room } = Qs.parse(location.search, {
     ignoreQueryPrefix: true
 });
@@ -92,96 +88,7 @@ const syncSpeed = 100;
 
 
 canvas.on({ 'mouse:move': sendData });
-/*
-This is from previous Canvas method
 
-// last known position
-
-let pos = { x: 0, y: 0, tx: 0, ty: 0 };
-
-//window.addEventListener('resize', resize);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('mousedown', setPosition);
-canvas.addEventListener('mouseenter', setPosition);
-
-// For mobile
-canvas.addEventListener('touchstart', setPosMobile);
-canvas.addEventListener('touchmove', drawMobile);
-
-
-clear.addEventListener('click', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-});
-
-// For Mobile
-
-function setPosMobile(e) {
-    //console.log(e.touches[0]);
-    e.preventDefault();
-    let touch = e.touches[0];
-    pos.tx = touch.clientX - canvas.offsetLeft;
-    pos.ty = touch.clientY - canvas.offsetTop;
-}
-
-function drawMobile(e) {
-    e.preventDefault();
-    ctx.beginPath();
-
-    ctx.lineWidth = brushThickness.value;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = clr.value;
-
-    // from
-    ctx.moveTo(pos.tx, pos.ty);
-    setPosMobile(e);
-    // to
-    ctx.lineTo(pos.tx, pos.ty);
-    ctx.stroke();
-
-    if (timeout != undefined) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-        let base64ImageData = canvas.toDataURL("image/png");
-        socket.emit('canvas-image', base64ImageData);
-    }, syncSpeed);
-}
-
-// new position from mouse event
-function setPosition(e) {
-    pos.x = e.pageX - canvas.offsetLeft;
-    pos.y = e.pageY - canvas.offsetTop;
-    // console.log(pos)
-}
-
-ctx.canvas.width = 0.98 * (window.innerWidth);
-
-ctx.canvas.height = 0.87 * (window.innerHeight);
-
-
-function draw(e) {
-    // mouse left button must be pressed
-    if (e.buttons !== 1) return;
-
-    ctx.beginPath();
-
-    ctx.lineWidth = brushThickness.value;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = clr.value;
-
-    // from
-    ctx.moveTo(pos.x, pos.y);
-    setPosition(e);
-    // to
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
-
-    if (timeout != undefined) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-        let base64ImageData = canvas.toDataURL("image/png");
-        socket.emit('canvas-image', base64ImageData);
-    }, syncSpeed);
-
-}*/
 
 const membersList = document.getElementById('membersList');
 const memberCount = document.getElementById('numb');
@@ -192,8 +99,7 @@ const memberCount = document.getElementById('numb');
 let sizeChange = false;
 
 function resize() {
-    // ctx.canvas.width = 0.75 * (window.innerWidth);
-    // ctx.canvas.height = 0.75 * (window.innerHeight);
+    
     if (!sizeChange) {
         canvas.setWidth(1920);
         canvas.setHeight(1280);
@@ -209,7 +115,7 @@ function resize() {
 let clrw = true;
 
 function changeClr() {
-    // ctx.globalCompositeOperation = 'destination-over';
+    
     if (canvas.backgroundColor == "#333333") {
         canvas.backgroundColor = "#ffffff";
         clrw = true;
@@ -217,9 +123,7 @@ function changeClr() {
         canvas.backgroundColor = "#333333";
         clrw = false;
     }
-    // ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // ctx.globalCompositeOperation = 'source-over';
+   
     canvas.renderAll();
 }
 
@@ -404,7 +308,7 @@ function start() {
 
     if (canvas.freeDrawingBrush) {
         canvas.freeDrawingBrush.color = drawingColorEl.value;
-        //canvas.freeDrawingBrush.source = canvas.freeDrawingBrush.getPatternSrc.call(this);
+       
         canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl.value, 10) || 5;
         canvas.freeDrawingBrush.shadow = new fabric.Shadow({
             blur: parseInt(drawingShadowWidth.value, 10) || 0,
@@ -501,10 +405,10 @@ canvas.on('mouse:up', function () {
     isDrawingShape = false;
     shapeBeingDrawn = null;
 
-    // Reset shape selector and re-enable pencil mode
+    
     shapeSelector.value = '';
     canvas.isDrawingMode = true;
-    updateDrawingButton(); // Optional
+    updateDrawingButton();
 });
 
 
@@ -522,11 +426,11 @@ canvas.renderAll();
 
 undoStack.push(canvas.toJSON());
 
-// Save state on object changes
+
 canvas.on('object:added', saveState);
 canvas.on('object:modified', saveState);
 canvas.on('object:removed', saveState);
-// ...existing code...
+
 
 function deleteObject() {
     canvas.remove(canvas.getActiveObject());
@@ -551,7 +455,7 @@ socket.on("canvas-draw", data => {
 socket.on("canvas-wipe", data => {
     canvas.clear();
     canvas.backgroundColor = "#ffffff";
-    // context.clearRect(0, 0, canvas.width, canvas.height)
+    
 });
 
 socket.on('roomUsers', ({ room, users, status }) => {
@@ -568,7 +472,7 @@ function outputUsers(users, status) {
   else leaveSound.play();
 
   memberCount.textContent = users.length;
-  membersList.innerHTML = ''; // clear previous list
+  membersList.innerHTML = '';
 
   users.forEach(user => {
     const li = document.createElement('li');
@@ -598,7 +502,7 @@ function feature() {
         alert('Invalid Name');
     }
     else {
-        // Send the name, username, image to backend
+       
         alert('Sent for Reviewing!! Stay Tuned!!\n Send the image in mail to arkaraj2017@gmail.com');
     }
 }
