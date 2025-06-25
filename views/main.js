@@ -38,6 +38,45 @@ let shapeBeingDrawn = null;
 let origX, origY;
 
 
+
+// Undo/Redo stacks
+let undoStack = [];
+let redoStack = [];
+
+let isRestoring = false; // Add this flag
+
+function saveState() {
+    if (isRestoring) return; // Prevent saving during undo/redo
+    redoStack = [];
+    undoStack.push(canvas.toJSON());
+    if (undoStack.length > 50) undoStack.shift();
+}
+
+function undoCanvas() {
+    if (undoStack.length > 1) {
+        redoStack.push(undoStack.pop());
+        const prevState = undoStack[undoStack.length - 1];
+        isRestoring = true;
+        canvas.loadFromJSON(prevState, () => {
+            canvas.renderAll();
+            isRestoring = false;
+        });
+    }
+}
+
+function redoCanvas() {
+    if (redoStack.length > 0) {
+        const state = redoStack.pop();
+        undoStack.push(state);
+        isRestoring = true;
+        canvas.loadFromJSON(state, () => {
+            canvas.renderAll();
+            isRestoring = false;
+        });
+    }
+}
+// ...existing code...
+
 // canvas.style.background = 'rgb(255,255,255)';
 
 //Get username and room from URL
@@ -481,6 +520,14 @@ function sendData() {
 start();
 canvas.renderAll();
 
+undoStack.push(canvas.toJSON());
+
+// Save state on object changes
+canvas.on('object:added', saveState);
+canvas.on('object:modified', saveState);
+canvas.on('object:removed', saveState);
+// ...existing code...
+
 function deleteObject() {
     canvas.remove(canvas.getActiveObject());
 }
@@ -534,7 +581,10 @@ function outputUsers(users, status) {
 
 
 function undo() {
-    alert('Functionality not available yet!!');
+    undoCanvas();
+}
+function redo() {
+    redoCanvas();
 }
 
 socket.on('wrong_Room', check => {
